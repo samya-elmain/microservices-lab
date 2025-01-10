@@ -38,24 +38,30 @@ module "enable_google_apis" {
 
 # Create GKE cluster
 resource "google_container_cluster" "my_cluster" {
+  name                   = var.name
+  location               = var.region
 
-  name     = var.name
-  location = var.region
-
-  # Enable autopilot for this cluster
-  enable_autopilot = true
-
-  # Set an empty ip_allocation_policy to allow autopilot cluster to spin up correctly
+  remove_default_node_pool = true
+  initial_node_count       = 1  
+  deletion_protection      = false
   ip_allocation_policy {
+    
   }
-
-  # Avoid setting deletion_protection to false
-  # until you're ready (and certain you want) to destroy the cluster.
-  # deletion_protection = false
-
   depends_on = [
     module.enable_google_apis
   ]
+}
+
+resource "google_container_node_pool" "default_node_pool" {
+  name       = "default-node-pool"
+  cluster    = google_container_cluster.my_cluster.name
+  location   = var.region
+
+  node_config {
+    machine_type = "e2-standard-2"
+  }
+
+  initial_node_count = 4
 }
 
 # Get credentials for cluster

@@ -1,0 +1,31 @@
+- hosts: gcp-vm
+  become: yes
+  tasks:
+    - name: Ensure Docker is installed
+      apt:
+        name: docker.io
+        state: present
+        update_cache: yes
+
+    - name: Add user to the docker group
+      user:
+        name: "{{ ansible_user }}"
+        groups: docker
+        append: yes
+
+    - name: Pull Docker image
+      docker_image:
+        name: us-central1-docker.pkg.dev/google-samples/microservices-demo/loadgenerator:v0.10.2
+        source: pull
+
+    - name: Run Docker container
+      docker_container:
+        name: loadGenerator
+        image: us-central1-docker.pkg.dev/google-samples/microservices-demo/loadgenerator:v0.10.2
+        state: started
+        ports:
+          - "80:80"
+          - "8089:8089"
+        env:
+          FRONTEND_ADDR: "{{ frontend_address }}"
+          USERS: "10"
