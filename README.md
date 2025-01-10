@@ -97,6 +97,6 @@ gcloud compute instances add-tags loadgeneratorvm \
     --zone=<your-zone>
 ```  
 so that we could finally access the UI like this:
-http://<VM-IP>:8089
+http://VM-IP:8089
 
 
