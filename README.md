@@ -67,12 +67,15 @@ kubectl port - forward -n istio - system svc / prometheus 8080:9090
 ## Performance analysis:
 This was done using the load generator VM and by running some scripts inside the container be it in a headless mode or with a UI:
 like this:
+```bash
 locust --host="http://${FRONTEND_ADDR}" --headless -u 10 -r 1 --csv=/tmp/load_10_users
 locust --host="http://${FRONTEND_ADDR}" --headless -u 50 -r 5 --csv=/tmp/load_50_users
 locust --host="http://${FRONTEND_ADDR}" --headless -u 100 -r 10 --csv=/tmp/load_100_users
 locust --host="http://${FRONTEND_ADDR}" --headless -u 200 -r 20 --csv=/tmp/load_200_users
+```
 
 also we had to change a little bit the ansible to expose the port 8089 like this:
+```bash
     - name: Run Docker container
       docker_container:
         name: loadGenerator
@@ -81,8 +84,9 @@ also we had to change a little bit the ansible to expose the port 8089 like this
         ports:
           - "80:80"
           - "8089:8089"
-
+```
 and also to open that port in the vm this way:
+```bash
 gcloud compute firewall-rules create allow-locust-ui \
     --allow tcp:8089 \
     --target-tags=loadgenerator \
@@ -91,7 +95,7 @@ gcloud compute firewall-rules create allow-locust-ui \
 gcloud compute instances add-tags loadgeneratorvm \
     --tags=loadgenerator \
     --zone=<your-zone>
-    
+```  
 so that we could finally access the UI like this:
 http://<VM-IP>:8089
 
