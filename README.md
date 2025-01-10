@@ -9,9 +9,9 @@ gcloud billing projects link yasmine-istio-demo-project --billing-account=
 3. GKE Cluster Creation
 ```bash
 gcloud beta container clusters create istio - canary \
--- zone = us - central1 - f \
--- machine - type = n1 - standard -2 \
--- num - nodes =2
+-- zone = us-central1-f \
+-- machine - type = n1-standard-2 \
+-- num-nodes =2
 ```
 
 4. Download and Install Istio
@@ -30,8 +30,7 @@ kubectl apply -f https://github.com/istio/istio/releases/download/1.24.2/samples
 Kiali failed to install via manifest, so I used Helm :
 helm repo add kiali https :// kiali . org / helm - charts
 helm repo update
-helm install kiali - server kiali / kiali - server -- namespace istio
-- system -- set auth . strategy = " anonymous "
+helm install kiali - server kiali / kiali - server -- namespace istio-system --set auth.strategy = " anonymous "
 kubectl patch svc kiali -n istio - system -p ’ {" spec ": {" type ":" LoadBalancer "}} ’
 ```
 5. Microservices Deployment
